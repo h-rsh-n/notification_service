@@ -1,16 +1,18 @@
 const { StatusCodes } = require('http-status-codes');
 const {TicketRepository} = require('../repositories');
+const {Template} = require('../utils/common')
 const { AppError } = require('../utils/errors/app-error');
 const ticketRepository = new TicketRepository();
 const {mailerConfig} = require('../config')
 
-async function sendMail(mailFrom,mailTo,subject,text){
+async function sendMail(mailFrom,mailTo,subject,bookingData){
   try {
+    const htmlContent = Template.bookingConfirmationTemplate(bookingData)
     const response = await mailerConfig.sendMail({
       from:mailFrom,
       to:mailTo,
       subject:subject,
-      text:text
+      html:htmlContent
     })
     return response;
   } catch (error) {
